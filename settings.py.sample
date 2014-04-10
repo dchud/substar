@@ -1,0 +1,10 @@
+# github API token, get one at https://github.com/settings/applications
+TOKEN = 'YOUR TOKEN HERE'
+
+# a hard limit on the number of repos to fetch
+FETCH_LIMIT = 10
+
+# see rate limit docs at https://developer.github.com/v3/#rate-limiting
+# 5000 assumes use of a valid OAuth token; it's 60 otherwise
+RATE_LIMIT_REQUESTS_PER_HOUR = 5000
+WAIT_BUFFER_SECONDS = (60 * 60) / RATE_LIMIT_REQUESTS_PER_HOUR
