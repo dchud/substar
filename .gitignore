@@ -54,3 +54,4 @@ docs/_build/
 
 *.swp
 settings.py
+data

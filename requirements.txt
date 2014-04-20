@@ -1,1 +1,4 @@
-pygithub
+matplotlib
+pandas
+requests
+scipy
