@@ -90,7 +90,7 @@ if __name__ == '__main__':
                 owner_commits = sum(rec['participation']['owner'])
                 owner_commits_percentage = 100.0 * owner_commits / all_commits \
                         if all_commits else 0
-                mean_commits_per_week = all_commits / 52
+                mean_commits_per_week = all_commits / 52.0
                 std_commits_per_week = numpy.std(rec['participation']['all'])
             row['all_commits'] = all_commits
             row['owner_commits'] = owner_commits
