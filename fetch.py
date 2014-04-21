@@ -102,7 +102,9 @@ if __name__ == '__main__':
 
             # get contributors
             # /repos/:owner/:repo/[stats/]contributors
-            contributors = repo_api_request(owner, name, 'contributors')
+            # note: user stats/contributors because plain contributors 
+            #       paginates, even though it's a lot more data and can 202
+            contributors = repo_api_request(owner, name, 'stats/contributors')
             if contributors:
                 rec['contributors'] = contributors
 
