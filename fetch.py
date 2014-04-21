@@ -7,6 +7,7 @@ API.  Report on results.
 
 import json
 import logging
+import logging.config
 from math import ceil
 import time
 
@@ -14,10 +15,8 @@ import requests
 
 from settings import *
 
-logging.basicConfig(level=logging.DEBUG)
-logging.debug('TOKEN: ' + TOKEN)
-logging.debug('MAX_RETRIES: %s' % MAX_RETRIES)
-logging.debug('FETCH_LIMIT: %s' % FETCH_LIMIT)
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger('fetch')
 
 HEADERS = {'Authorization': 'token %s' % TOKEN}
 
@@ -26,16 +25,24 @@ def wait_buffer(req):
     """by default, wait this long between requests to follow github's
     rate limits."""
     reset_seconds = int(req.headers['x-ratelimit-reset']) - ceil(time.time())
-    logging.debug('reset_seconds: %s' % reset_seconds)
     remaining = float(req_full_data.headers['x-ratelimit-remaining'])
-    logging.debug('remaining: %s' % remaining)
-    buffer = reset_seconds / remaining
-    logging.debug('wait: %s' % buffer)
+    # pad it a little, just to have a friendly cushion
+    buffer = 1.1 * reset_seconds / remaining
+    # whenever the timer gets down close to a reset, add extra cushion
+    # note also, buffer should never be negative
+    if buffer < 0.1:
+        buffer = 0.5
+    logger.debug('wait: %s' % buffer)
     time.sleep(buffer)
 
 
 def repo_api_request(owner, name, func, count=0):
-    logging.debug('request: %s' % func)
+    """
+    Retry-able api requests; handle 202 responses with 1+-second delay
+    retries up to MAX_RETRIES times with linear backoff.  Ignore rate 
+    limit; 1+ seconds should always be longer than wait_buffer().
+    """
+    logger.debug('func: %s' % func)
     r = requests.get('https://api.github.com/repos/%s/%s/%s' % (owner,
         name, func), headers=HEADERS)
     wait_buffer(r)
@@ -43,9 +50,11 @@ def repo_api_request(owner, name, func, count=0):
         return r.json()
     elif r.status_code == 202:
         count += 1
-        logging.debug('202 Accepted (count %s)' % count)
+        logger.debug('202 Accepted (count %s)' % count)
+        # linear backoff: always wait at least one extra second per retry
+        time.sleep(1 * count)
         if count <= MAX_RETRIES:
-            return repo_api_request(func, owner, name, count=count)
+            return repo_api_request(owner, name, func, count=count)
     logging.error(r)
     return None
 
@@ -55,82 +64,98 @@ def save_recs(recs, count):
     fp = open(filename, 'wb')
     json.dump(recs, fp, indent=2)
     fp.close()
-    logging.debug('SAVED: %s' % filename)
+    logger.debug('SAVED: %s' % filename)
     return filename
 
 
 if __name__ == '__main__':
-    count = 0
+    count = 1
     recs = []
     # get a list of repos
     req_repos = requests.get('https://api.github.com/repositories',
         headers=HEADERS)
+    next_repos_url = req_repos.links['next']['url']
     repos = req_repos.json()
-    for repo in repos:
-        count += 1
-        if count > FETCH_LIMIT:
-            break
-        # get full data
-        # /repos/:owner/:repo
-        owner = repo['owner']['login']
-        logging.debug('repo-owner %s' % owner)
-        name = repo['name']
-        logging.debug('repo-name %s' % name)
-        req_full_data = requests.get(
-                'https://api.github.com/repos/%s/%s' % (owner, name),
-                 headers=HEADERS)
-        full_data = req_full_data.json()
-        rec = {'owner': owner, 'name': name}
-        for key in ['id', 'full_name', 'url', 'homepage', 'git_url',
-                'stargazers_count', 'watchers_count', 'subscribers_count',
-                'forks_count', 'size', 'fork', 'open_issues_count',
-                'has_issues', 'has_wiki', 'has_downloads', 'pushed_at',
-                'created_at', 'updated_at', 'network_count']:
-            rec[key] = full_data.get(key, '')
-        parent_keys = ['id', 'fork', 'forks_count', 'stargazers_count',
-                'watchers_count', 'open_issues_count']
-        wait_buffer(req_full_data)
+    while count <= FETCH_LIMIT:
+        logger.debug('count: %s' % count)
+        for repo in repos:
+            owner = repo['owner']['login']
+            name = repo['name']
+            logger.debug('REPO: %s/%s' % (owner, name))
 
-        # get contributors
-        # /repos/:owner/:repo/[stats/]contributors
-        contributors = repo_api_request(owner, name, 'contributors')
-        if contributors:
-            rec['contributors'] = contributors
+            # get full data
+            # /repos/:owner/:repo
+            req_full_data = requests.get(
+                    'https://api.github.com/repos/%s/%s' % (owner, name),
+                     headers=HEADERS)
+            full_data = req_full_data.json()
+            rec = {'owner': owner, 'name': name}
+            for key in ['id', 'full_name', 'url', 'homepage', 'git_url',
+                    'stargazers_count', 'watchers_count', 'subscribers_count',
+                    'forks_count', 'size', 'fork', 'open_issues_count',
+                    'has_issues', 'has_wiki', 'has_downloads', 'pushed_at',
+                    'created_at', 'updated_at', 'network_count']:
+                rec[key] = full_data.get(key, '')
+            parent_keys = ['id', 'fork', 'forks_count', 'stargazers_count',
+                    'watchers_count', 'open_issues_count']
+            wait_buffer(req_full_data)
 
-        # get participation
-        # /repos/:owner/:repo/stats/participation
-        participation = repo_api_request(owner, name, 'stats/participation')
-        if participation:
-            rec['participation'] = participation
+            # get contributors
+            # /repos/:owner/:repo/[stats/]contributors
+            contributors = repo_api_request(owner, name, 'contributors')
+            if contributors:
+                rec['contributors'] = contributors
 
-        # get languages
-        # /repos/:owner/:repo/languages
-        languages = repo_api_request(owner, name, 'languages')
-        if languages:
-            rec['languages'] = languages
+            # get participation
+            # /repos/:owner/:repo/stats/participation
+            participation = repo_api_request(owner, name, 'stats/participation')
+            if participation:
+                rec['participation'] = participation
 
-        # get teams
-        # /repos/:owner/:repo/teams
-        # NOTE: url pattern 404s across repos
-        #teams = repo_api_request(owner, name, 'teams')
-        #if teams:
-        #    rec['teams'] = teams
-        
-        # get hierarchy 
-        if full_data['fork']:
-            if full_data['parent']['id'] != full_data['id']:
-                rec['parent'] = full_data['parent']
-                for key in parent_keys:
-                    rec['parent_%s' % key] = rec['parent'].get(key, '')
-            if full_data['source']['id'] != full_data['parent']['id']:
-                rec['source'] = full_data['source']
-                for key in parent_keys:
-                    rec['source_%s' % key] = rec['source'].get(key, '')
+            # get languages
+            # /repos/:owner/:repo/languages
+            languages = repo_api_request(owner, name, 'languages')
+            if languages:
+                rec['languages'] = languages
 
-        recs.append(rec)
-        if len(recs) == 100:
-            save_recs(recs, count)
-            recs = []
+            # get code frequency
+            # /repos/:owner/:repo/stats/code_frequency
+            code_frequency = repo_api_request(owner, name,
+                    'stats/code_frequency')
+            if code_frequency:
+                rec['code_frequency'] = code_frequency
+
+            # get teams
+            # /repos/:owner/:repo/teams
+            # NOTE: url pattern 404s across repos
+            #teams = repo_api_request(owner, name, 'teams')
+            #if teams:
+            #    rec['teams'] = teams
+            
+            # get hierarchy 
+            if full_data['fork']:
+                if full_data['parent']['id'] != full_data['id']:
+                    rec['parent'] = full_data['parent']
+                    for key in parent_keys:
+                        rec['parent_%s' % key] = rec['parent'].get(key, '')
+                if full_data['source']['id'] != full_data['parent']['id']:
+                    rec['source'] = full_data['source']
+                    for key in parent_keys:
+                        rec['source_%s' % key] = rec['source'].get(key, '')
+
+            recs.append(rec)
+            if len(recs) == 100:
+                save_recs(recs, count)
+                recs = []
+
+            count += 1
+            logger.debug('count: %s' % count)
+            if count == FETCH_LIMIT:
+                break
+        logger.debug('FETCH: %s' % next_repos_url)
+        req_repos = requests.get(next_repos_url)
+        next_repos_url = req_repos.links['next']['url']
+        repos = req_repos.json()
 
 if recs:
     save_recs(recs, count)
