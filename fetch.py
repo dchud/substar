@@ -5,10 +5,14 @@ Load up data about a number of repositories from github using their
 API.  Report on results.
 """
 
+import argparse
+import glob
 import json
 import logging
 import logging.config
 from math import ceil
+import os
+import re
 import time
 
 import requests
@@ -71,18 +75,38 @@ def save_recs(recs, count):
 
 def next_url(url):
     # bump the sinceid 9900 to cycle through all repos over time
-    # from oldest to most recent, so we achieve roughly a 1% sample overall
+    # from oldest to most recent
     base, equalsign, sinceid = url.partition('=') 
     bumped_sinceid = int(sinceid) + 9900
     return '%s=%s' % (base, bumped_sinceid)
 
 
 if __name__ == '__main__':
-    count = 1
+    parser = argparse.ArgumentParser(description='fetch github repo data')
+    parser.add_argument('-a', '--append', action='store_true',
+            default=False, help='pick up where we left off')
+    args = parser.parse_args()
+
+    if args.append:
+        logger.debug('appending')
+        files = glob.glob('data/*')
+        oldest_file = max(files, key=os.path.getctime)
+        logger.debug('oldest_file: %s' % oldest_file)
+        old_data = json.load(open(oldest_file))
+        oldest_rec_id = int(old_data[-1]['id'])
+        logger.debug('oldest_rec_id: %s' % oldest_rec_id)
+        bumped_rec_id = oldest_rec_id + 9900
+        req_repos = requests.get(
+                'https://api.github.com/repositories?since=%s' % bumped_rec_id)
+        oldest_filename = oldest_file.split('/')[-1]
+        oldest_count_id = re.findall(r'\d+', oldest_filename)[-1]
+        count = int(oldest_count_id)
+    else:
+        # get a list of repos, starting from 0
+        req_repos = requests.get('https://api.github.com/repositories',
+            headers=HEADERS)
+        count = 1
     recs = []
-    # get a list of repos
-    req_repos = requests.get('https://api.github.com/repositories',
-        headers=HEADERS)
     next_repos_url = next_url(req_repos.links['next']['url'])
     repos = req_repos.json()
     while count <= FETCH_LIMIT:
@@ -108,7 +132,7 @@ if __name__ == '__main__':
 
             # NOTE: if there's never been a push, then forget it, jump
             #       to the next repo
-            if rec['pushed_at'] == '':
+            if rec['pushed_at'] is None:
                 logger.debug('EMPTY, move on')
                 continue
 
@@ -124,6 +148,10 @@ if __name__ == '__main__':
             r = requests.get('https://api.github.com/repos/%s/%s/contributors' %
                     (owner, name), headers=HEADERS)
             wait_buffer(r)
+            # secondary check for uninteresting repo
+            if r.status_code == 204:
+                logger.debug('204, move on')
+                continue
             contributors = r.json()
             while r.links.has_key('next'):
                 logger.debug('func: contributors')
