@@ -15,19 +15,19 @@ from pprint import pprint
 
 from settings import *
 
-SIMPLE_FIELDS = ['id', 'owner', 'name', 
-        'size', 'has_downloads', 'has_issues', 'has_wiki',
-        'forks_count', 'network_count', 'stargazers_count', 
+SIMPLE_FIELDS = ['id', 'owner', 'name',
+        'size', 'forks_count', 'network_count', 'stargazers_count',
         'subscribers_count', 'watchers_count', 'open_issues_count',
-        'fork']
+        ]
+BOOLEAN_FIELDS = ['has_downloads', 'has_issues', 'has_wiki', 'fork']
 DATE_FIELDS = ['created_at', 'updated_at', 'pushed_at']
 COMPUTED_FIELDS = ['num_contributors', 'num_weeks', 'lines_added',
         'lines_added_per_week', 'lines_subtracted',
         'lines_subtracted_per_week', 'num_weeks_since_change', 'all_commits',
         'owner_commits', 'owner_commits_percentage', 'mean_commits_per_week',
         'std_commits_per_week']
-ALL_FIELDS = SIMPLE_FIELDS + DATE_FIELDS + COMPUTED_FIELDS
-print ','.join(ALL_FIELDS)
+ALL_FIELDS = SIMPLE_FIELDS + BOOLEAN_FIELDS + DATE_FIELDS + COMPUTED_FIELDS
+print '\t'.join(ALL_FIELDS)
 
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger('process')
@@ -38,6 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--datadir', default='data',
             help='data directory')
     args = parser.parse_args()
+
     langs = {}
     for fname in os.listdir(args.datadir):
         filename = '%s/%s' % (args.datadir, fname)
@@ -50,8 +51,15 @@ if __name__ == '__main__':
             row = {}
             for field in SIMPLE_FIELDS:
                 row[field] = rec.get(field, '')
+            for field in BOOLEAN_FIELDS:
+                row[field] = '1' if rec.get(field, False) else '0'
             for field in DATE_FIELDS:
-                row[field] = (rec.get(field, '') or '')[:10]
+                value = (rec.get(field, '') or '')[:10]
+                if value:
+                    yyyy, mm, dd = value.split('-')
+                    row[field] = '%s/%s/%s' % (mm, dd, yyyy)
+                else:
+                    row[field] = ''
             for k, v in rec.get('languages', {}).items():
                 try:
                     langs[k] += v
@@ -99,5 +107,5 @@ if __name__ == '__main__':
             row['std_commits_per_week'] = std_commits_per_week
 
             # Send it in, Jerome!
-            print ','.join(str(row.get(f, '')) for f in ALL_FIELDS)
+            print '\t'.join(str(row.get(f, '')) for f in ALL_FIELDS)
     #pprint(langs)

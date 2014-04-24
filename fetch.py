@@ -105,6 +105,13 @@ if __name__ == '__main__':
                     'has_issues', 'has_wiki', 'has_downloads', 'pushed_at',
                     'created_at', 'updated_at', 'network_count']:
                 rec[key] = full_data.get(key, '')
+
+            # NOTE: if there's never been a push, then forget it, jump
+            #       to the next repo
+            if rec['pushed_at'] == '':
+                logger.debug('EMPTY, move on')
+                continue
+
             parent_keys = ['id', 'fork', 'forks_count', 'stargazers_count',
                     'watchers_count', 'open_issues_count']
             wait_buffer(req_full_data)
