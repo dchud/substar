@@ -27,7 +27,6 @@ COMPUTED_FIELDS = ['num_contributors', 'num_weeks', 'lines_added',
         'owner_commits', 'owner_commits_percentage', 'mean_commits_per_week',
         'std_commits_per_week']
 ALL_FIELDS = SIMPLE_FIELDS + BOOLEAN_FIELDS + DATE_FIELDS + COMPUTED_FIELDS
-print '\t'.join(ALL_FIELDS)
 
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger('process')
@@ -39,6 +38,7 @@ if __name__ == '__main__':
             help='data directory')
     args = parser.parse_args()
 
+    print '\t'.join(ALL_FIELDS)
     langs = {}
     for fname in os.listdir(args.datadir):
         filename = '%s/%s' % (args.datadir, fname)
