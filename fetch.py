@@ -60,6 +60,7 @@ def repo_api_request(owner, name, func, count=0):
 
 
 def save_recs(recs, count):
+    # write out the file to disk as an indented json file
     filename = 'data/recs-%s.json' % count
     fp = open(filename, 'wb')
     json.dump(recs, fp, indent=2)
@@ -68,13 +69,21 @@ def save_recs(recs, count):
     return filename
 
 
+def next_url(url):
+    # bump the sinceid 9900 to cycle through all repos over time
+    # from oldest to most recent, so we achieve roughly a 1% sample overall
+    base, equalsign, sinceid = url.partition('=') 
+    bumped_sinceid = int(sinceid) + 9900
+    return '%s=%s' % (base, bumped_sinceid)
+
+
 if __name__ == '__main__':
     count = 1
     recs = []
     # get a list of repos
     req_repos = requests.get('https://api.github.com/repositories',
         headers=HEADERS)
-    next_repos_url = req_repos.links['next']['url']
+    next_repos_url = next_url(req_repos.links['next']['url'])
     repos = req_repos.json()
     while count <= FETCH_LIMIT:
         logger.debug('count: %s' % count)
@@ -104,9 +113,17 @@ if __name__ == '__main__':
             # /repos/:owner/:repo/[stats/]contributors
             # note: user stats/contributors because plain contributors 
             #       paginates, even though it's a lot more data and can 202
-            contributors = repo_api_request(owner, name, 'stats/contributors')
-            if contributors:
-                rec['contributors'] = contributors
+            logger.debug('func: contributors')
+            r = requests.get('https://api.github.com/repos/%s/%s/contributors' %
+                    (owner, name), headers=HEADERS)
+            wait_buffer(r)
+            contributors = r.json()
+            while r.links.has_key('next'):
+                logger.debug('func: contributors')
+                r = requests.get(r.links['next']['url'], headers=HEADERS)
+                contributors.append(r.json())
+                wait_buffer(r)
+            rec['contributors'] = contributors
 
             # get participation
             # /repos/:owner/:repo/stats/participation
@@ -156,7 +173,7 @@ if __name__ == '__main__':
                 break
         logger.debug('FETCH: %s' % next_repos_url)
         req_repos = requests.get(next_repos_url)
-        next_repos_url = req_repos.links['next']['url']
+        next_repos_url = next_url(req_repos.links['next']['url'])
         repos = req_repos.json()
 
 if recs:
