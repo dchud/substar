@@ -5,7 +5,6 @@ Process data collected using fetch.py into a single CSV file.
 """
 
 import argparse
-import csv
 import json
 import logging
 import logging.config
@@ -13,19 +12,17 @@ import numpy
 import os
 from pprint import pprint
 
-from settings import *
-
-SIMPLE_FIELDS = ['id', 'owner', 'name',
-        'size', 'forks_count', 'network_count', 'stargazers_count',
-        'subscribers_count', 'watchers_count', 'open_issues_count',
+SIMPLE_FIELDS = ['id', 'owner', 'name', 'size', 'forks_count', 'network_count',
+        'stargazers_count', 'open_issues_count',
         ]
 BOOLEAN_FIELDS = ['has_downloads', 'has_issues', 'has_wiki', 'fork']
-DATE_FIELDS = ['created_at', 'updated_at', 'pushed_at']
-COMPUTED_FIELDS = ['num_contributors', 'num_weeks', 'lines_added',
+DATE_FIELDS = ['created_at', 'pushed_at']
+COMPUTED_FIELDS = ['star10', 'num_contributors', 'num_weeks', 'lines_added',
         'lines_added_per_week', 'lines_subtracted',
         'lines_subtracted_per_week', 'num_weeks_since_change', 'all_commits',
         'owner_commits', 'owner_commits_percentage', 'mean_commits_per_week',
-        'std_commits_per_week']
+        'std_commits_per_week', 'lang0_prop', 'lang0', 'lang1', 'lang2',
+        ]
 ALL_FIELDS = SIMPLE_FIELDS + BOOLEAN_FIELDS + DATE_FIELDS + COMPUTED_FIELDS
 
 logging.config.fileConfig('logging.conf')
@@ -44,11 +41,9 @@ if __name__ == '__main__':
         filename = '%s/%s' % (args.datadir, fname)
         logger.debug(filename)
         recs = json.load(open(filename))
-        """STILL TO PROCESS:
-        u'contributors', u'languages', u'participation',
-        """
         for rec in recs:
             row = {}
+            # NOTE: basic metadata about repositories overall
             for field in SIMPLE_FIELDS:
                 row[field] = rec.get(field, '')
             for field in BOOLEAN_FIELDS:
@@ -66,8 +61,13 @@ if __name__ == '__main__':
                 except:
                     langs[k] = v
 
+            # are there at least 10 stargazers?
+            # NOTE: use this for stratified sampling
+            row['star10'] = True if int(rec['stargazers_count']) >= 10 \
+                else False
+
+            # NOTE: derived data about overall/recent development activity
             # how many contributors?
-            # FIXME: handle more extensive data from stats/contributors
             row['num_contributors'] = len(rec.get('contributors', []))
 
             # summarize code changes week over week
@@ -106,6 +106,22 @@ if __name__ == '__main__':
             row['mean_commits_per_week'] = mean_commits_per_week
             row['std_commits_per_week'] = std_commits_per_week
 
-            # Send it in, Jerome!
+            # sort languages by usage
+            langs_all_sorted = sorted([(int(v), k) for k, v
+                in rec.get('languages', {}).items()], reverse=True)
+            langs_all = [lang for size, lang in langs_all_sorted]
+            # limit to the top 2
+            for i in range(len(langs_all[:2])):
+                row['lang%s' % i] = langs_all[i]
+
+            # how much of the proportion of the code is the top language?
+            try:
+                total_size = sum([size for size, lang in langs_all_sorted])
+                lang0_size = int(langs_all_sorted[0][0])
+                # use a float to get the percentages, otherwise rounded to int
+                row['lang0_prop'] = float(lang0_size) / total_size
+            except:
+                row['lang0_prop'] = 0
+
+            # Render as a CSV line with tab separator
             print '\t'.join(str(row.get(f, '')) for f in ALL_FIELDS)
-    #pprint(langs)

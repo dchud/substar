@@ -1,0 +1,1351 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass paper
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+DNSC 6279 - Data Mining - Project Report
+\end_layout
+
+\begin_layout Author
+Daniel Chudnov
+\end_layout
+
+\begin_layout Date
+May 12, 2014
+\end_layout
+
+\begin_layout Section
+Problem Statement
+\end_layout
+
+\begin_layout Standard
+Github (github.com) is a popular social network for software developers and
+ the code they produce.
+ It allows individual programmers and groups or organizations to publish
+ and share their code using the Git version control software application,
+ and it enables powerful features for sharing changes to code.
+ Many of the world's most widely used software products are shared on Github,
+ such as the Linux kernel, and even projects that aren't actively developed
+ using Github mirror their code to Github for the benefits of visiblity
+ and ease of use Github offers, including the Apache web server, the Python
+ programming language, the PostgreSQL database, and Git itself.
+ By a rough count (using the monotonically-increasing 
+\begin_inset Quotes eld
+\end_inset
+
+id
+\begin_inset Quotes erd
+\end_inset
+
+ variable present in API calls to list repositories registered in Github,
+ more about which below), there have been well over nineteen million software
+ project repositories registered in Github since its inception in early
+ 2008.
+ In my own work at GW and within my industry (software development in libraries)
+ I and most of my colleagues perform the majority of our work using Github,
+ so I have a strong personal interest in its success as a platform and what
+ we may learn from it.
+\end_layout
+
+\begin_layout Standard
+One of the hardest choicest to make as a software developer -- especially
+ as one who works with free/libre/open source software often, as I and my
+ colleagues do -- is which software projects and products written by other
+ people we should use as a basis upon which to build our own software.
+ For any common computing problem there are at least three different packages
+ available in any programming language of choice, so which is the best to
+ use? Which packages work best, and which new initiatives are likely to
+ 
+\begin_inset Quotes eld
+\end_inset
+
+get traction
+\begin_inset Quotes erd
+\end_inset
+
+? There is a natural tension between doing new work in software and building
+ that new work upon other, existing, reliable packages, to narrow the scope
+ of innovation and to allow for a stable development environment.
+ Because of this software developers have a natural tendency to look for
+ certain things when evaluating a package: Who is its author? How long has
+ it been under development, and how active has its development been lately?
+ Does the community use tickets and milestones to plan releases? Have others
+ 
+\begin_inset Quotes eld
+\end_inset
+
+forked
+\begin_inset Quotes erd
+\end_inset
+
+ the package (made their own copy) and submitted their own changes to it?
+ No one answer to these questions is a perfect piece of information, rather
+ we go on intuition and experience to make these choices.
+\end_layout
+
+\begin_layout Standard
+The Github API (developer.github.com/v3/) provides an opportunity to examine
+ these choices, and to determine whether we can predict the potential success
+ of a software project using data rather than simply by intuition.
+ For each repository in Github, extensive metadata about that repository
+ and its activity is available through a well-documented set of API calls.
+ For this project, I collected this metadata for roughly 10,000 repositories
+ registered between 2008-2010, and I attempted to build several models that
+ might tell us more about what we can determine automatically about any
+ repository in Github, based on how the project is managed in Github, the
+ programming language choices its authors make, and patterns of recent developme
+nt activity for each project.
+ Although I do not have a great deal of confidence in these models, the
+ process has taught me a lot about the data mining process, especially the
+ critical data collection and pre-processing steps, and also about Github
+ as a community.
+\end_layout
+
+\begin_layout Section
+Data Selection
+\end_layout
+
+\begin_layout Standard
+I used the following calls to Github's API to return data for each repository.
+ Note that each URL begins with 
+\begin_inset Quotes eld
+\end_inset
+
+https://api.github.com
+\begin_inset Quotes erd
+\end_inset
+
+.
+ These API calls are documented extensively on the Github API site.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Path
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/repositories
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+A pageable list of repositories, starting from oldest
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/repos/owner/name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Basic metadata (owner, name from previous call)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/repos/owner/name/contributors
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Pageable details about all code contributors
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/repos/owner/name/stats/participation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Counts of commits by owner vs.
+ all others, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/repos/owner/name/languages
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Relative size of code by programming language
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+/repos/owner/name/stats/code_frequency
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Counts of lines added/removed weekly, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+These calls generated a lot of raw data for each repository which I then
+ processed further, as described in Section 3 below.
+ For each repository, basic metadata of value for this project includes:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="18" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Type
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+id
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unique identifier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+owner
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+repository owning user
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+string
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+repository name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+string
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+created_at
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+date of repository creation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+date
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pushed_at
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+date of last 
+\begin_inset Quotes eld
+\end_inset
+
+pushed
+\begin_inset Quotes erd
+\end_inset
+
+ commit (change)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+date
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+fork
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+whether this is a 
+\begin_inset Quotes eld
+\end_inset
+
+fork
+\begin_inset Quotes erd
+\end_inset
+
+ or copy of another repository
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+forks_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of forks of this repository
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+has_wiki
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+whether the project uses Github's wiki pages
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+has_issues
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+whether the project uses Github's issue tracking
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+has_downloads
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+whether the project has downloadable package builds
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+parent_id
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+id of project from which this project was forked, if applicable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+source_id
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+id of original project from which this and parents were forked
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+size
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+size of the repository, in source lines of code
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+open_issues_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of currently-open issues in Github's issue tracker
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+stargazers_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# users who have 
+\begin_inset Quotes eld
+\end_inset
+
+starred
+\begin_inset Quotes erd
+\end_inset
+
+ (or favorited) this repository
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+subscribers_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# users who subscribe to update notifications
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+network_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of all forks in network of source repository
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For this project, I used 
+\begin_inset Quotes eld
+\end_inset
+
+id
+\begin_inset Quotes erd
+\end_inset
+
+ as an identifier variable, 
+\begin_inset Quotes eld
+\end_inset
+
+stargazers_count
+\begin_inset Quotes erd
+\end_inset
+
+ as the target variable, and rejected 
+\begin_inset Quotes eld
+\end_inset
+
+owner
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+name
+\begin_inset Quotes erd
+\end_inset
+
+ although I carried them through into SAS as useful metadata to check values
+ against (we can easily construct a Github URL to a repository if we have
+ its owner and name).
+\end_layout
+
+\begin_layout Standard
+Further details about processed variables are specified in the next section.
+\end_layout
+
+\begin_layout Standard
+Before continuing, however, a few details about the process of fetching
+ data from the API are worth noting.
+ Collecting the data from Github proved to be more of a challenge than I
+ expected for several reasons:
+\end_layout
+
+\begin_layout Itemize
+Github limits API calls to 5000/hour, so at the rate of six calls per repository
+, it took several overnight runs to collect full data for over 10,000 repositori
+es (and re-runs after adjusting the code several times).
+\end_layout
+
+\begin_layout Itemize
+The fetch script I wrote honors this limit by attempting to wait between
+ calls according to the amount of time remaining before the wait limit is
+ reset by the API, but I found that this reset time was sliding backwards,
+ causing my code to issue calls after a longer delay than necessary.
+ After testing this very carefully I wrote to Github staff about it, and
+ reported it as a bug with details about my queries.
+ They acknowledged it was a bug in their system and thanked me for the report,
+ but as far as I know the problem has not yet been fixed.
+ I estimate this slowed down my data collection by 30-40%.
+\end_layout
+
+\begin_layout Itemize
+Some of the API calls (specifically the ones that include '/stats' in the
+ URL pattern) are documented as 
+\begin_inset Quotes eld
+\end_inset
+
+slow
+\begin_inset Quotes erd
+\end_inset
+
+ on the API side as they calculate summary statistics.
+ These calls might result in an HTTP response code 202 Accepted (rather
+ than 200 OK) which indicates that the request has been acknowledged but
+ the response is not yet ready.
+ To accomodate this possibility, which I saw regularly as my fetch script
+ executed, I implemented a simple linear backoff strategy to enable subsequent
+ calls with an increasing delay between each call.
+ This strategy worked, but it also slowed down the data fetching process.
+\end_layout
+
+\begin_layout Itemize
+Some registered repositories have no meaningful data within them; I chose
+ to ignore these, and did not include them in the sample.
+\end_layout
+
+\begin_layout Itemize
+Some API calls (e.g.
+ /stats/contributors) require paging to fetch all results; I used /contributors
+ instead to save time, but only after first fetching the more complete details,
+ which did not prove interesting after all.
+\end_layout
+
+\begin_layout Itemize
+Sometimes my script simply failed (due to bad logic or improper error handling
+ in my code, failed network connection, etc.).
+ At first, I had to restart it over from scratch, but after losing data
+ a few times I wrote an 
+\begin_inset Quotes eld
+\end_inset
+
+append
+\begin_inset Quotes erd
+\end_inset
+
+ feature that attempts to discover where the process last left off by checking
+ the id of the last repository in the most recently saved file (the fetch
+ scripts saves data in chunks of 100 repositories per file).
+\end_layout
+
+\begin_layout Itemize
+After working with the results of metadata about several thousand repositories,
+ I noticed an obvious trend I should have considered sooner.
+ The API call to list all the repositories in Github started back at the
+ beginning of Github, and proceeded chronological order.
+ Because of this, I was only retrieving data about the very oldest data
+ in Github.
+ This seemed like a strong bias to use as the community of users for Github
+ started small, like for any social network, and grew first from a set of
+ users who had particular interests in the same languages and tools the
+ Github developers themselves used.
+ Indeed the most active early users were the founders of Github themselves,
+ and some of the earliest repositories were Ruby-based web applications
+ (Github is a Ruby language application) and Ruby-based libraries for working
+ with Git repositories.
+ Rather than proceed with this bias, I added a 
+\begin_inset Quotes eld
+\end_inset
+
+striping
+\begin_inset Quotes erd
+\end_inset
+
+ function to the fetch script to jump ahead in time between calls.
+ With the response to the query returning 100 repositories, I modified the
+ next call to the API to jump ahead 9900 repositories, thus taking a sample
+ of 100 out of each 10,000 in chronological time, or 1% of repositories
+ overall.
+ Without this change, my sample set would have only contained the oldest
+ repositories from the first few months of Github's existence; instead,
+ it includes a sampling of repositories from the first three years.
+ This still exhibits a bias of sorts as Github's largest growth has come
+ in the past 2-3 years, but this still seemed to be a good enough sample
+ for this project.
+ Perhaps I will follow up with exploring a larger sample including more
+ recent repositories in the future.
+\end_layout
+
+\begin_layout Standard
+This set of issues led to a longer period of iteration over the data fetching
+ process, delaying the processing and modeling steps.
+ It reinforced a key lesson, that there is no such thing as 
+\begin_inset Quotes eld
+\end_inset
+
+clean data
+\begin_inset Quotes erd
+\end_inset
+
+, even if it's coming from a 
+\begin_inset Quotes eld
+\end_inset
+
+clean API
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Every API has its own quirks, and possibly flaws, and it will always take
+ time to account for and adjust to these issues.
+\end_layout
+
+\begin_layout Section
+Data Pre-Processing
+\end_layout
+
+\begin_layout Standard
+What operations did you perform on your data to organize it in a form suitable
+ for Enterprise Miner.
+ Specify any queries, joins, transformations, how you treat missing values
+ etc.
+\end_layout
+
+\begin_layout Standard
+I collected the data from the Github API into a set of JSON files, 100 records
+ per file, for a total of n=10,096 repositories.
+ For each repository record, I started with the basic JSON-based response
+ to the basic metadata request for each repository and added results from
+ the additional calls to the in-memory dictionary for each respository before
+ writing each to local disk.
+ JSON is an excellent format for this kind of work; it has all the hierarchical
+ expressiveness of XML but very little overhead, and it takes exactly one
+ line to either read it in or write it out from most languages.
+\end_layout
+
+\begin_layout Standard
+The overall set of data I chose included a wide variety of potential values.
+ It seemed best to explore it some and determine how best to pre-process
+ one or more files for import into SAS prior to model building.
+ Here are some of the basic impressions the data gave at first glance.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/hist-log-stargazers.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Starting with the dependent/target variable 
+\begin_inset Quotes eld
+\end_inset
+
+stargazers_count
+\begin_inset Quotes erd
+\end_inset
+
+, we see that it has a lognormal distribution evidenced by the histogram
+ of the log of this value.
+ A small proportion of repositories among the over ten thousand I collected
+ ever 
+\begin_inset Quotes eld
+\end_inset
+
+caught on
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/boolean-has-percentages.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I suspected that projects that made use of Github's issue tracking feature
+ might be more popular because this indicates that the community of developers
+ is actively working on the code and soliciting feedback.
+ Similarly, but to a lesser extent, I suspected that use of other Github
+ features such as their 
+\begin_inset Quotes eld
+\end_inset
+
+file downloads
+\begin_inset Quotes erd
+\end_inset
+
+ feature and project wiki pages might also indicate project health.
+ The numbers for Downloads and Wiki seem unusually high to me, though, and
+ although I've verified that this is what the data I fetched indicates,
+ this does not seem to correspond to what I've seen in project sites, in
+ particular it seems like far fewer than 90% of projects use the downloads
+ feature, but this indicates the percentage is higher than 90%.
+ Perhaps these values are not trustworthy.
+ The lower number for Issues is perhaps more likely to be accurate, and
+ the final bar for Fork, indicating that roughly 30% of repositories are
+ forks of other repositories, seems plausible enough, although I am unexcited
+ about its potential predictive value.
+\end_layout
+
+\begin_layout Standard
+Another exploratory chart indicates a strong relationship between forks
+ and stargazers:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/pairs-counts.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here we can see that there is indeed a strong correlation between the number
+ of stargazers and the number of forks of a project.
+ This makes intuitive sense; more popular projects seem more likely to find
+ other users working with the code, offering up changes, etc.
+\end_layout
+
+\begin_layout Standard
+At this point it seemed clear that there might not be any groundbreaking
+ paradigm to discover here; a log/power tail of projects are popular, popular
+ projects get forked a lot, and some of the data from the API might not
+ be 100% reliable (based on the percentages of repositories that use downloads
+ and wikis).
+ It seemed like a good idea to start to derive new attributes from the existing
+ data
+\end_layout
+
+\begin_layout Section
+Mining Technique Selection
+\end_layout
+
+\begin_layout Standard
+Explain your choice of specific technique(s) to be applied to your problem(s).
+\end_layout
+
+\begin_layout Section
+Data Mining Results
+\end_layout
+
+\begin_layout Standard
+Present the complete results of each technique with detailed explanation.
+ Submit your written analysis in a Word file along with data and program
+ files from SAS, R or any other tools that you used.
+\end_layout
+
+\begin_layout Section
+Appendix
+\end_layout
+
+\begin_layout Standard
+All code from this project is available in a Github repository at https://github.
+com/dchud/substar.
+ In particular, the following scripts handle the tasks described:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Script
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Task
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+https://github.com/dchud/substar/blob/master/fetch.py
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fetch all data about repositories
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
