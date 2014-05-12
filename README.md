@@ -6,4 +6,4 @@ github api, parse into an analyzable format
 
 to view the write up, visit:
 
-  [ipython notebook](http://nbviewer.ipython.org/github/dchud/substar/blob/master/20140424-dm-talk.ipynb)
+  [ipython notebook](http://nbviewer.ipython.org/github/dchud/substar/blob/master/20140501-dm-talk.ipynb)
