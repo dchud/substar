@@ -1920,6 +1920,53 @@ We see that the RMSE increases from 0.264 (training) to 0.27 (validation),
 Regression
 \end_layout
 
+\begin_layout Standard
+The regression model zeroed in on forks_count as well, and also pulled in
+ 
+\begin_inset Quotes eld
+\end_inset
+
+created_at
+\begin_inset Quotes erd
+\end_inset
+
+ with a very low weight, which might just be an indication of popularity
+ bias toward older projects in the sample, as noted above.
+ Otherwise it is not an overwhelmingly compelling model.
+ Here are the basic parameter estimates:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/regression-estimates.png
+	scale 80
+
+\end_inset
+
+			
+\end_layout
+
+\begin_layout Standard
+The performance of the regression model reveals a little more:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/regression-fit-stats.png
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here we see a RMSE of 0.192 in training and 0.21 in validation, indicating
+ the model might be performing consistently.
+ The misclassification rate increases slightly from 0.046 in training to
+ 0.054 in validation as well.
+\end_layout
+
 \begin_layout Subsection
 Comparison
 \end_layout
@@ -2005,12 +2052,236 @@ In this table we see that the Root ASE of the tree model degrades a bit
  in validation.
 \end_layout
 
+\begin_layout Standard
+Assembling the misclassification rates from the various two-way charts above,
+ we see:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Model
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Misclassification Rate (training)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Misclassification Rate (validation)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Tree
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.035
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.048
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Neural Network
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.072
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.074
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Regression
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.046
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.054
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+According to this measure, the tree model outperforms both of the other
+ models in both training and in validation.
+\end_layout
+
 \begin_layout Subsection
 Conclusion
 \end_layout
 
 \begin_layout Standard
-Dot dot dot.
+This project has taught me a great deal if the results are not particularly
+ compelling.
+ Each of the models zeroes in on forks_count as the key predictor of project
+ popularity, and this makes good intuitive sense.
+ It is not groundbreaking in any way, except perhaps in what it didn't find:
+ there does not seem to be strong predictive value in the main languages
+ a project uses or in the recent history of a project's commit activity,
+ at least not present in the combination of attributes I used to train the
+ models described here.
+\end_layout
+
+\begin_layout Standard
+The process of collecting data was incredibly valuable to me as a lesson
+ in suitability of any data to a particular task.
+ I has assumed that collecting data from Github's well-documented API would
+ be simple, and that the data would be 
+\begin_inset Quotes eld
+\end_inset
+
+clean
+\begin_inset Quotes erd
+\end_inset
+
+, but I spent many weeks iterating over the process and reconsidering the
+ measures I was computing.
+ I even found a bug in Github's API! All told, however, if I had allowed
+ myself more time to work with the data itself I would likely have found
+ more attributes to derive for consideration in these models.
+\end_layout
+
+\begin_layout Standard
+There are many likely flaws in my results, beyond my nascent and weak skills
+ in data mining.
+ The collected data only comprises records from the first three years of
+ github; in the three years since its popularity has grown immensely and
+ the variety of projects registered with Github repositories has grown enormousl
+y.
+ If I were to repeat this study the first step I would take would be to
+ repeat the data gathering process to include a wider 
+\begin_inset Quotes eld
+\end_inset
+
+stripe
+\begin_inset Quotes erd
+\end_inset
+
+ of data from the entire lifetime of Github.
+ A second step I would take would be to more closely examine the attributes
+ I derived surrounding the activity around a project.
+ I am certain I left out a number of important considerations.
+\end_layout
+
+\begin_layout Standard
+Two deeper avenues for exploring this data exist as well and I pursued neither.
+ First, as suggested by Professor Prasad during my project talk in class,
+ the data I collected gives no indication of when users 
+\begin_inset Quotes eld
+\end_inset
+
+starred
+\begin_inset Quotes erd
+\end_inset
+
+ the repositories; it just includes the current count of stargazers.
+ It would be interesting to track this number over time for a number of
+ repositories and compare growth rates, looking for correlations between
+ activity and attention/popularity.
+ Finally, I would like to consider the code inside each repository.
+ Can we glean anything from the actual code used to write applications,
+ beyond programming language choices? For example, in Python many projects
+ use built-in Python libraries and common third-party support libraries
+ for frequently-needed tasks.
+ Might there be a correspondence between the use of certain support project
+ dependencies and their popularity, especially over time? It would be fascinatin
+g to build a dashboard to indicate which support libraries are 
+\begin_inset Quotes eld
+\end_inset
+
+gaining traction
+\begin_inset Quotes erd
+\end_inset
+
+ in each of the different programming language communities and in each of
+ the respective application sectors.
+ This, however, would require a lot more data and a lot more time.
 \end_layout
 
 \begin_layout Section
@@ -2018,8 +2289,8 @@ Appendix
 \end_layout
 
 \begin_layout Standard
-All code from this project is available in a Github repository at https://github.
-com/dchud/substar.
+All code from this project and the derived dataset used to train the three
+ models is available in a Github repository at https://github.com/dchud/substar.
  In particular, the following scripts handle the tasks described:
 \end_layout
 
@@ -2110,6 +2381,1268 @@ Extracted dataset, n=10,067
 </cell>
 </row>
 </lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The code for fetch.py (on which I spent the bulk of my time on this project)
+ follows:
+\end_layout
+
+\begin_layout Standard
+
+\size small
+\begin_inset listings
+lstparams "basicstyle={\footnotesize\ttfamily},language=Python,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+\size small
+#!/usr/bin/env python
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+"""
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+Load up data about a number of repositories from github using their
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+API.
+  Report on results.
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+"""
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import argparse
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import glob
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import json
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import logging
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import logging.config
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+from math import ceil
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import os
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import re
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import time
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+import requests
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+from settings import *
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+logging.config.fileConfig('logging.conf')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+logger = logging.getLogger('fetch')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+HEADERS = {'Authorization': 'token %s' % TOKEN}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+def wait_buffer(req):
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    """by default, wait this long between requests to follow github's
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    rate limits."""
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    reset_seconds = int(req.headers['x-ratelimit-reset']) - ceil(time.time())
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    remaining = float(req_full_data.headers['x-ratelimit-remaining'])
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    # pad it a little, just to have a friendly cushion
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    buffer = 1.1 * reset_seconds / remaining
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    # whenever the timer gets down close to a reset, add extra cushion
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    # note also, buffer should never be negative
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    if buffer < 0.1:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        buffer = 0.5
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    logger.debug('wait: %s' % buffer)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    time.sleep(buffer)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+def repo_api_request(owner, name, func, count=0):
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    """
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    Retry-able api requests; handle 202 responses with 1+-second delay
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    retries up to MAX_RETRIES times with linear backoff.
+  Ignore rate 
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    limit; 1+ seconds should always be longer than wait_buffer().
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    """
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    logger.debug('func: %s' % func)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    r = requests.get('https://api.github.com/repos/%s/%s/%s' % (owner,
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        name, func), headers=HEADERS)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    wait_buffer(r)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    if r.status_code == 200:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        return r.json()
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    elif r.status_code == 202:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        count += 1
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        logger.debug('202 Accepted (count %s)' % count)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        # linear backoff: always wait at least one extra second per retry
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        time.sleep(1 * count)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        if count <= MAX_RETRIES:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            return repo_api_request(owner, name, func, count=count)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    logging.error(r)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    return None
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+def save_recs(recs, count):
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    # write out the file to disk as an indented json file
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    filename = 'data/recs-%s.json' % count
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    fp = open(filename, 'wb')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    json.dump(recs, fp, indent=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    fp.close()
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    logger.debug('SAVED: %s' % filename)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    return filename
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+def next_url(url):
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    # bump the sinceid 9900 to cycle through all repos over time
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    # from oldest to most recent
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    base, equalsign, sinceid = url.partition('=') 
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    bumped_sinceid = int(sinceid) + 9900
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    return '%s=%s' % (base, bumped_sinceid)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+if __name__ == '__main__':
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    parser = argparse.ArgumentParser(description='fetch github repo data')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    parser.add_argument('-a', '--append', action='store_true',
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            default=False, help='pick up where we left off')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    args = parser.parse_args()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    if args.append:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        logger.debug('appending')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        files = glob.glob('data/*')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        oldest_file = max(files, key=os.path.getctime)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        logger.debug('oldest_file: %s' % oldest_file)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        old_data = json.load(open(oldest_file))
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        oldest_rec_id = int(old_data[-1]['id'])
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        logger.debug('oldest_rec_id: %s' % oldest_rec_id)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        bumped_rec_id = oldest_rec_id + 9900
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        req_repos = requests.get(
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                'https://api.github.com/repositories?since=%s' % bumped_rec_id)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        oldest_filename = oldest_file.split('/')[-1]
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        oldest_count_id = re.findall(r'
+\backslash
+d+', oldest_filename)[-1]
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        count = int(oldest_count_id)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    else:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        # get a list of repos, starting from 0
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        req_repos = requests.get('https://api.github.com/repositories',
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            headers=HEADERS)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        count = 1
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    recs = []
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    next_repos_url = next_url(req_repos.links['next']['url'])
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    repos = req_repos.json()
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    while count <= FETCH_LIMIT:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        logger.debug('count: %s' % count)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        for repo in repos:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            owner = repo['owner']['login']
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            name = repo['name']
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            logger.debug('REPO: %s/%s' % (owner, name))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # get full data
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # /repos/:owner/:repo
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            req_full_data = requests.get(
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    'https://api.github.com/repos/%s/%s' % (owner, name),
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                     headers=HEADERS)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            full_data = req_full_data.json()
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            rec = {'owner': owner, 'name': name}
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            for key in ['id', 'full_name', 'url', 'homepage', 'git_url',
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    'stargazers_count', 'watchers_count', 'subscribers_count',
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    'forks_count', 'size', 'fork', 'open_issues_count',
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    'has_issues', 'has_wiki', 'has_downloads', 'pushed_at',
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    'created_at', 'updated_at', 'network_count']:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                rec[key] = full_data.get(key, '')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # NOTE: if there's never been a push, then forget it, jump
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            #       to the next repo
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            if rec['pushed_at'] is None:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                logger.debug('EMPTY, move on')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                continue
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            parent_keys = ['id', 'fork', 'forks_count', 'stargazers_count',
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    'watchers_count', 'open_issues_count']
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            wait_buffer(req_full_data)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # get contributors
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # /repos/:owner/:repo/[stats/]contributors
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # note: user stats/contributors because plain contributors 
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            #       paginates, even though it's a lot more data and can
+ 202
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            logger.debug('func: contributors')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            r = requests.get('https://api.github.com/repos/%s/%s/contributors'
+ %
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    (owner, name), headers=HEADERS)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            wait_buffer(r)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # secondary check for uninteresting repo
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            if r.status_code == 204:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                logger.debug('204, move on')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                continue
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            contributors = r.json()
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            while r.links.has_key('next'):
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                logger.debug('func: contributors')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                r = requests.get(r.links['next']['url'], headers=HEADERS)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                contributors.append(r.json())
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                wait_buffer(r)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            rec['contributors'] = contributors
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # get participation
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # /repos/:owner/:repo/stats/participation
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            participation = repo_api_request(owner, name, 'stats/participation')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            if participation:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                rec['participation'] = participation
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # get languages
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # /repos/:owner/:repo/languages
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            languages = repo_api_request(owner, name, 'languages')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            if languages:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                rec['languages'] = languages
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # get code frequency
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # /repos/:owner/:repo/stats/code_frequency
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            code_frequency = repo_api_request(owner, name,
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    'stats/code_frequency')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            if code_frequency:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                rec['code_frequency'] = code_frequency
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # get teams
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # /repos/:owner/:repo/teams
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # NOTE: url pattern 404s across repos
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            #teams = repo_api_request(owner, name, 'teams')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            #if teams:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            #    rec['teams'] = teams
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            # get hierarchy 
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            if full_data['fork']:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                if full_data['parent']['id'] != full_data['id']:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    rec['parent'] = full_data['parent']
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    for key in parent_keys:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                        rec['parent_%s' % key] = rec['parent'].get(key, '')
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                if full_data['source']['id'] != full_data['parent']['id']:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    rec['source'] = full_data['source']
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                    for key in parent_keys:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                        rec['source_%s' % key] = rec['source'].get(key, '')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            recs.append(rec)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            if len(recs) == 100:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                save_recs(recs, count)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                recs = []
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            count += 1
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            logger.debug('count: %s' % count)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+            if count == FETCH_LIMIT:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+                break
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        logger.debug('FETCH: %s' % next_repos_url)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        req_repos = requests.get(next_repos_url)
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        next_repos_url = next_url(req_repos.links['next']['url'])
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+        repos = req_repos.json()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+if recs:
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+    save_recs(recs, count)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
 
 \end_inset
 
