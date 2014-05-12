@@ -1874,6 +1874,143 @@ Neural Network
 \begin_layout Standard
 For the neural network I used a Multilayer Perceptron with misclassification
  rate as the model selection criteria.
+ Knowing that a neural network is at the opposite end of the interpretability
+ spectrum, let's start with the average error chart:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/network-chart.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The model performs fairly well after a few iterations but plateaus after
+ around 10 and then degrades as we might expect after 30 or so iterations.
+ A look at the cumulative lift chart reveals some improvements:
+\end_layout
+
+\begin_layout Standard
+Here are the fit statistics for the neural network:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/network-fit-stats.png
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We see that the RMSE increases from 0.264 (training) to 0.27 (validation),
+ a modest change that indicates that the model might do a decent job with
+ predicting.
+ The misclassification rate goes from 0.072 (training) to 0.074 (validation),
+ also a modest change.
+\end_layout
+
+\begin_layout Subsection
+Regression
+\end_layout
+
+\begin_layout Subsection
+Comparison
+\end_layout
+
+\begin_layout Standard
+A look at the combined lift charts reveals no clear winner but a definite
+ loser: the regression and tree models work pretty well, but the network
+ does not perform as well.
+ Here is the combined chart of cumulative lift:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/combined-lift-cumulative.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here we see that the tree model performs best, with a lift close to 8 in
+ the first decile; the regression model performs nearly as well, still above
+ 7, and the neural network model offers up a modest improvement at a lift
+ of just under 4.
+ At the second decile and beyond the regression model appears to outperform
+ the tree model slightly.
+ A closer look at the noncumulative lift is below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/combined-lift-noncumulative.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this chart the slightly higher slope of the regression model to a positive
+ lift at the 20% decile is evident over the more quickly degrading lift
+ of the tree model, but they are both offer only marginal results beyond
+ the 10% decile.
+ An interesting hiccup is the gentle spike at 90% for the neural network;
+ perhaps it has some capacity to correctly determine low-end 
+\begin_inset Quotes eld
+\end_inset
+
+not popular
+\begin_inset Quotes erd
+\end_inset
+
+ classifications, even if this is not useful.
+\end_layout
+
+\begin_layout Standard
+We can compare the tree and network models another way, using their misclassific
+ation rates:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/combined-misclassification.png
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this table we see that the Root ASE of the tree model degrades a bit
+ from training to validation but remains better than the network model at
+ 0.204.
+ The network model comes out at 0.27, degrading less than the tree model
+ in validation but offering slightly worse performance.
+ This pattern is duplicated in the misclassification rates, with the tree
+ model dropping from 0.035 in training to 0.048 in validation, still better
+ than the network model, which drops a touch from 0.072 in training to 0.074
+ in validation.
+\end_layout
+
+\begin_layout Subsection
+Conclusion
+\end_layout
+
+\begin_layout Standard
+Dot dot dot.
 \end_layout
 
 \begin_layout Section
