@@ -1203,7 +1203,402 @@ At this point it seemed clear that there might not be any groundbreaking
  be 100% reliable (based on the percentages of repositories that use downloads
  and wikis).
  It seemed like a good idea to start to derive new attributes from the existing
- data
+ data.
+\end_layout
+
+\begin_layout Standard
+I decided to break the data down along three lines: basic attributes, code
+ activity, and languages.
+ The basic attributes are those already defined and listed in the previous
+ section.
+ To this I added the following set of computed values based on activity
+ on the repository:
+\end_layout
+
+\begin_layout Standard
+'star10', 'lang0_prop', 'lang0', 'lang1', 'lang2',
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="13" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+num_contributors
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+count of distinct users contributing code
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+num_weeks
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+weeks since project inception
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+num_weeks_since_change
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+weeks since last commit
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lines_added
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+total lines added, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lines_added_per_week
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+avg lines added/week, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lines_subtracted
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+total lines subtracted, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lines_subtracted_per_week
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+avg lines subtracted/week, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+all_commits
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+total count of commits
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+owner_commits
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+commits by owner, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+owner_commits_percentage
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+percent of commits by owner, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mean_commits_per_week
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+mean commits/week, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_commits_per_week
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+standard dev.
+ of commits/week, past year
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+These values were readily obtained and computed from the API data provided,
+ implemented in the script 
+\begin_inset Quotes eld
+\end_inset
+
+process.py
+\begin_inset Quotes erd
+\end_inset
+
+ (see Appendix).
+\end_layout
+
+\begin_layout Standard
+As an example of these attributes, below is a chart of owner_commits_percentage,
+ indicating how many changes to each repository in the past year had been
+ commited specifically by the repository owner themself:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/log-owner-commits-freq.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The vast majority of projects active in the past year had a majority of
+ its commits in the past year created by the repository owner (the two bins
+ at the far right with log(owner_commits_percentage > four).
+ This indicates that a very small minority of projects have a plurality
+ of active committers.
+\end_layout
+
+\begin_layout Standard
+The last area of repository composition I reviewed was the choice of languages
+ used in each project.
+ I was interested to see if there was any pattern present across several
+ years of Github data toward a preference for particular languages, or whether
+ these matched language popularity in the wider community.
+ Summarizing the languages used in repositories by the top two per each
+ (more than one kind of language can be used in a single project, and often
+ is) revealed the following basic data:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/lang0-count.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that Ruby is the most popular primary language, followed by JavaScript,
+ Python, Java, PHP, Perl, and C.
+ This is not a surprising list when compared to industry measures of the
+ same information (for example, see http://www.tiobe.com/index.php/tiobe_index)
+ and accounting for the early prevalence of Ruby code in Github's early
+ days.
+\end_layout
+
+\begin_layout Standard
+The most-used secondary languages are slightly more interesting:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/lang1-count.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this list the most popular secondary languages in projects was JavaScript,
+ by far, followed by Shell, Ruby, C, Python, and C++.
+ This makes an intuitive sense as many projects in Github are web and mobile
+ applications, and many of these applications use at least some JavaScript,
+ whether the larger application itself is written in Ruby, Python, PHP,
+ or any other language.
+ Shell is a common choice for tool scripts around the main code of a project,
+ with Unix commands written in Shell to automate tasks related to application
+ configuration, data management, backups, and other maintenance tasks.
+ 
+\end_layout
+
+\begin_layout Standard
+One final attribute I computed was 
+\begin_inset Quotes eld
+\end_inset
+
+star10
+\begin_inset Quotes erd
+\end_inset
+
+, a binary classification of whether a repository had at least ten stargazers.
+ This proved to be useful in generating stratified samples as well as being
+ a target variable for model generation, as described in the next section.
 \end_layout
 
 \begin_layout Section
@@ -1211,17 +1606,274 @@ Mining Technique Selection
 \end_layout
 
 \begin_layout Standard
-Explain your choice of specific technique(s) to be applied to your problem(s).
+I chose to work with a Regression, Neural Network, and a Classification
+ Tree for this model, as each can be used to create predictive models.
+ At first I worked with one combined dataset and used stargazers_count as
+ the target variable.
+ This resulted in unexciting models that did not reveal much, largely due
+ to the log distribution of popularity present in stargazers_count, as shown
+ above in the histogram of log(stargazers_count).
+\end_layout
+
+\begin_layout Standard
+I consulted with Professor Prasad who encouraged me to take a stratified
+ sample to capture the 
+\begin_inset Quotes eld
+\end_inset
+
+rare event
+\begin_inset Quotes erd
+\end_inset
+
+ of popularity according to stargazers_count.
+ I added a Sampling node in SAS and found that it was easiest to generate
+ an additional binary attribute 
+\begin_inset Quotes eld
+\end_inset
+
+star10
+\begin_inset Quotes erd
+\end_inset
+
+, based on whether a repository had at least 10 stargazers, to use as the
+ stratification attribute.
+ I created a 2000-item sample using a 50/50 equal sized stratification in
+ slotted that between the Data Source and Partition nodes, using an 80%/20%
+ training/validation split.
+ I then fed that to one each of Tree, Neural Network, and Regression models,
+ finally drawing each of those into an Assessment node.
+ The diagram in Enterprise Miner is the following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/miner-diagram.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This represents the final model I will describe in detail now.
+ One quick note, however: before combining all the data into one data source,
+ I attempted to separate out the three categories of attributes mentioned
+ above into their own datasources for basic metadata, project activity,
+ and language choices, running the three models paradigms separately on
+ each.
+ This did not prove fruitful, save for one mildly interesting finding.
+ Upon running the neural network on language choice data, it drew out 
+\begin_inset Quotes eld
+\end_inset
+
+lang1 = JavaScript
+\begin_inset Quotes erd
+\end_inset
+
+ as a modest predictor of project popularity.
+ As noted in the previous section, JavaScript is a prevalent secondary language
+ in repositories of many languages, in particular for web and mobile application
+s.
+ This is not particularly meaningful in the large picture beyond keeping
+ in mind that 
+\begin_inset Quotes eld
+\end_inset
+
+web and mobile applications are popular
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+For all of these models, I began using the 
+\begin_inset Quotes eld
+\end_inset
+
+stargazers_count
+\begin_inset Quotes erd
+\end_inset
+
+, an interval attribute, as the target/dependent variable.
+ This provide largely difficult to predict well, and none of the models
+ were able to come close to a reliable prediction.
+ Having derived the new attribute 
+\begin_inset Quotes eld
+\end_inset
+
+star10
+\begin_inset Quotes erd
+\end_inset
+
+, a binary classification of whether a repository had at least 10 stargazers,
+ to use as a parameter to stratify the sample upon, I tried using star10
+ as the target instead of stargazers_count, thinking it might simplify the
+ problem somewhat.
+ After all, whether a project has 12 or 22 stargazers or whether it has
+ 500 or 600 doesn't seem terribly important; that it has at least 10 indicates
+ some basic level of user interest.
+ This proved to be an improvement, as the models all generated somewhat
+ better results, if not still overwhelmingly so.
+\end_layout
+
+\begin_layout Standard
+In all of the following discussion, 
+\begin_inset Quotes eld
+\end_inset
+
+star10
+\begin_inset Quotes erd
+\end_inset
+
+ is the target variable.
 \end_layout
 
 \begin_layout Section
 Data Mining Results
 \end_layout
 
+\begin_layout Subsection
+Classification Tree
+\end_layout
+
 \begin_layout Standard
-Present the complete results of each technique with detailed explanation.
- Submit your written analysis in a Word file along with data and program
- files from SAS, R or any other tools that you used.
+For the Tree model, I used the Gini reduction splitting criterion and allowed
+ SAS to select the model assessment measure by setting it to 
+\begin_inset Quotes eld
+\end_inset
+
+automatic
+\begin_inset Quotes erd
+\end_inset
+
+, and left other settings to their defaults.
+ It produced a tree that focused primarily on the forks_count attribute,
+ noted above as a value apparently linearly correlated with project popularity.
+ Below is the tree:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/tree-gini-tree.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This tree follows simple rules: if there are more than two forks, the project
+ is typically at least modestly successful; if there are less than two,
+ it probably isn't.
+ At both of these ends of the spectrum, the validation data results are
+ quite close to the training results.
+ In the case of zero or one fork, the model correctly predicted roughly
+ 1.9% of items as 
+\begin_inset Quotes eld
+\end_inset
+
+popular
+\begin_inset Quotes erd
+\end_inset
+
+; for 3-6 forks, the validation rate of 60.7% is close to the training rate
+ of 57.8%, and for more than seven forks, from 95.6% (training) to 83.6% (validatio
+n) isn't terrible.
+ In between these values, particularly for repositories with exactly two
+ forks, the validation results are poor.
+ The lowest-level split on 
+\begin_inset Quotes eld
+\end_inset
+
+lang0
+\begin_inset Quotes erd
+\end_inset
+
+ does not add a lot to the picture.
+\end_layout
+
+\begin_layout Standard
+The misclassification rates per number of leaves shows a classic set of
+ rate curves, with the U-shape of the validation results looking strong.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/tree-gini-chart.png
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This reinforces what we learned about the interpretability of a simple classific
+ation tree.
+ The splits on forks_count are intuitive and match my expectations as noted
+ above.
+ Anyone looking at the model can quickly understand that either a low or
+ modestly high forks_count on a repository is a good indicator of what to
+ expect.
+ Ultimately, the takeaway lesson that if you see that at least three different
+ people have forked a repository, it probably has at least ten people watching
+ it, and is thus 
+\begin_inset Quotes eld
+\end_inset
+
+popular
+\begin_inset Quotes erd
+\end_inset
+
+ in some sense, is a decent rule of thumb that is easy to remember.
+ The corollary that a project with only zero or one fork is unlikely to
+ be successful yet is also intuitive and easy to remember.
+\end_layout
+
+\begin_layout Standard
+One final observation: the SAS tree model only found a handful of attributes
+ even worth considering beyond forks_count and lang0, as indicated in this
+ table:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /Users/dchud/Documents/Box Sync/2013-mbsa/2014s-data-mining/project/writeup-screenshots/tree-importance.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Among these attributes, only lang0 from among all the language-related attribute
+s, and only pushed_at from among the attributes indicating project activity,
+ were deemed at all important.
+ Even these were found to be of very low importance, on a par with has_wiki
+ (discounted due to perceived unreliability in discussion above) and created_at,
+ which might bring a component of bias for the older and oldest projects,
+ which have simply had more time to be 
+\begin_inset Quotes eld
+\end_inset
+
+starred
+\begin_inset Quotes erd
+\end_inset
+
+, especially in the early days when very few repositories had even been
+ registered yet.
+\end_layout
+
+\begin_layout Subsection
+Neural Network
+\end_layout
+
+\begin_layout Standard
+For the neural network I used a Multilayer Perceptron with misclassification
+ rate as the model selection criteria.
 \end_layout
 
 \begin_layout Section
@@ -1236,12 +1888,12 @@ com/dchud/substar.
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="2">
+<lyxtabular version="3" rows="4" columns="2">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1250,7 +1902,7 @@ Script
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1261,16 +1913,16 @@ Task
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-https://github.com/dchud/substar/blob/master/fetch.py
+github.com/dchud/substar/blob/master/fetch.py
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1281,60 +1933,40 @@ Fetch all data about repositories
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+github.com/dchud/substar/blob/master/process.py
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+Process collected data into CSV file
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+github.com/dchud/substar/blob/master/combined-10000.txt
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Extracted dataset, n=10,067
 \end_layout
 
 \end_inset
